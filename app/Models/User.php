@@ -19,8 +19,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name',
         'email',
+        'username',
         'password',
+        'phone',
+        'active',
+        'role_id',
+        'deleted_at'
     ];
 
     /**
@@ -41,4 +47,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Nombre de la tabla asociada al modelo.
+     * @var string
+     */
+    protected $table = 'users';
+
+    /**
+     * Obtener rol asociado con el user.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class,'role_id','role_id'); //primero se declara FK y despues la PK del modelo asociado
+    }
+
+    /**
+     * Valores defualt para los campos especificados.
+     * @var array
+     */
+    // protected $attributes = [
+    //     'active' => true,
+    // ];
 }
