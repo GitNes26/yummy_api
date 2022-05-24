@@ -23,10 +23,14 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        DB::table('roles')->insert([ 'role_name' => 'Administrador']);
-        DB::table('roles')->insert([ 'role_name' => 'Gerente']);
-        DB::table('roles')->insert([ 'role_name' => 'Empleado']);
-        DB::table('roles')->insert([ 'role_name' => 'Mesa']);
+        // DB::table('roles')->insert([ 'role_name' => 'Administrador']);
+        // DB::table('roles')->insert([ 'role_name' => 'Gerente']);
+        // DB::table('roles')->insert([ 'role_name' => 'Empleado']);
+        // DB::table('roles')->insert([ 'role_name' => 'Mesa']);
+
+        $this->call([
+            RoleSeeder::class,
+        ]);
 
         DB::table('users')->insert([
             'name' => 'Admin',
