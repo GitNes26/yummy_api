@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ObjectResponse;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use PhpParser\Node\Stmt\TryCatch;
 
 class UserController extends Controller
 {
-    public function login (Request $request) {
-
+    public function login (Request $request)
+    {
         $request->validate([
             'username'=>'required',
             'password'=>'required'
@@ -24,28 +24,13 @@ class UserController extends Controller
         if(!$user || !Hash::check($request->password, $user->password)) {
 
             throw ValidationException::withMessages([
-                'aviso...'=>['Credenciales incorrectas'],
+                'message.'=>['Credenciales incorrectas'],
+                'alert_title.'=>['Credenciales incorrectas'],
+                'alert_text'=>['Credenciales incorrectas'],
             ]);
         }
         $token = $user->createToken($request->username, ['user'])->plainTextToken;
         return response()->json(['token'=>$token], 201);
-
-    }
-    private function DefaultResponse() {
-        $response = [
-            "status" => false,
-            "message" => "no se logro completar la petcion.",
-            "data" => [],
-        ];
-        return $response;
-    }
-    private function CatchResponse() {
-        $response = [
-            "status" => false,
-            "message" => "Ocurrio un error, verifica tus datos.",
-            "data" => [],
-        ];
-        return $response;
     }
 
 
@@ -57,8 +42,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             // $lista = DB::select('SELECT * FROM users where active = 1');
             $list = User::where('active', true)
@@ -66,15 +50,14 @@ class UserController extends Controller
             ->select('users.id','users.name','users.last_name','users.email','users.username','users.phone','roles.role_id','roles.role_name')
             ->get();
             
-            $response = [
-                "status" => "correct",
-                "data" => $list
-            ];
-        } catch (\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | lista usuarios.');
+            data_set($response,'data',$list);
+
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response,$status);
+        return response()->json($response,$response["status_code"]);
         
     }
 
@@ -96,8 +79,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $token = $request->bearerToken();
         
@@ -110,15 +92,14 @@ class UserController extends Controller
                 'phone' => $request->phone,
                 'role_id' => $request->role_id,
             ]);
-            $response = [
-                'status' => 'correct',
-                'message' => 'usuario creado'
-            ];
-        } catch (\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | usuario registrado.');
+            data_set($response,'alert_text','Usuario registrado');
+
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response,$status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -131,23 +112,21 @@ class UserController extends Controller
      */
     public function show(Request $request, int $id)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $user = User::where('id', $id)
             ->join('roles', 'users.role_id', '=', 'roles.role_id')
             ->select('users.id','users.name','users.last_name','users.email','users.username','users.phone','roles.role_id','roles.role_name')
             ->get();
 
-            $response = [
-                "status" => "correct",
-                "data" => $user
-            ];
-        } catch (\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | usuario encontrado.');
+            data_set($response,'data',$user);
+
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response,$status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -171,8 +150,7 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $user = User::where('id', $request->id)
             ->update([
@@ -185,19 +163,18 @@ class UserController extends Controller
                 'role_id' => $request->role_id,
             ]);
 
-            $response = [
-                'status' => 'correct',
-                'message' => 'usuario actualizado'
-            ];
-        } catch (\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | usuario actualizado.');
+            data_set($response,'alert_text','Usuario actualizado');
+
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }        
-        return response()->json($response,$status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
-     * Eliminar (cambiar estado activo=false) un usuario especidifco.
+     * "Eliminar" (cambiar estado activo=false) un usuario especidifco.
      *
      * @param  \App\Models\User  $user
      * @param  int $id
@@ -205,22 +182,20 @@ class UserController extends Controller
      */
     public function destroy(int $id)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             User::where('id', $id)
             ->update([
                 'active' => false,
                 'deleted_at' => date('Y-m-d H:i:s'),
             ]);
-            $response = [
-                'status' => 'correct',
-                'message' => 'usuario eliminado'
-            ];
-        } catch (\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | usuario eliminado.');
+            data_set($response,'alert_text','Usuario eliminado');
+
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response,$status);
+        return response()->json($response,$response["status_code"]);
     }
 }
