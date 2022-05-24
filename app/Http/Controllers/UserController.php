@@ -6,22 +6,45 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use PhpParser\Node\Stmt\TryCatch;
 
 class UserController extends Controller
 {
-    private function DefaultResponse() {
-        $response = array([
-            "result" => "incorrect",
-            "data" => "no se logro completar la petcion"
+    public function login (Request $request) {
+
+        $request->validate([
+            'username'=>'required',
+            'password'=>'required'
         ]);
+
+        $user = User::where('username', $request->username)
+        ->first();
+
+        if(!$user || !Hash::check($request->password, $user->password)) {
+
+            throw ValidationException::withMessages([
+                'aviso...'=>['Credenciales incorrectas'],
+            ]);
+        }
+        $token = $user->createToken($request->username, ['user'])->plainTextToken;
+        return response()->json(['token'=>$token], 201);
+
+    }
+    private function DefaultResponse() {
+        $response = [
+            "status" => false,
+            "message" => "no se logro completar la petcion.",
+            "data" => [],
+        ];
         return $response;
     }
     private function CatchResponse() {
-        $response = array([
-            "result" => "incorrect",
-            "data" => "no se logro completar la petcion"
-        ]);
+        $response = [
+            "status" => false,
+            "message" => "Ocurrio un error, verifica tus datos.",
+            "data" => [],
+        ];
         return $response;
     }
 
@@ -35,6 +58,7 @@ class UserController extends Controller
     public function index()
     {
         $response = $this->DefaultResponse();
+        $status = 200;
         try {
             // $lista = DB::select('SELECT * FROM users where active = 1');
             $list = User::where('active', true)
@@ -42,14 +66,15 @@ class UserController extends Controller
             ->select('users.id','users.name','users.last_name','users.email','users.username','users.phone','roles.role_id','roles.role_name')
             ->get();
             
-            $response = array([
-                "result" => "correct",
+            $response = [
+                "status" => "correct",
                 "data" => $list
-            ]);
+            ];
         } catch (\Throwable $th) {
+            $status = 400;
             $response = $this->CatchResponse();
         }
-        return response()->json($response);
+        return response()->json($response,$status);
         
     }
 
@@ -72,6 +97,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $response = $this->DefaultResponse();
+        $status = 200;
         try {
             $token = $request->bearerToken();
         
@@ -84,14 +110,15 @@ class UserController extends Controller
                 'phone' => $request->phone,
                 'role_id' => $request->role_id,
             ]);
-            $response = array(
-                'result' => 'correct',
+            $response = [
+                'status' => 'correct',
                 'message' => 'usuario creado'
-            );
+            ];
         } catch (\Throwable $th) {
+            $status = 400;
             $response = $this->CatchResponse();
         }
-        return response()->json($response);
+        return response()->json($response,$status);
     }
 
     /**
@@ -105,20 +132,22 @@ class UserController extends Controller
     public function show(Request $request, int $id)
     {
         $response = $this->DefaultResponse();
+        $status = 200;
         try {
             $user = User::where('id', $id)
             ->join('roles', 'users.role_id', '=', 'roles.role_id')
             ->select('users.id','users.name','users.last_name','users.email','users.username','users.phone','roles.role_id','roles.role_name')
             ->get();
 
-            $response = array([
-                "result" => "correct",
+            $response = [
+                "status" => "correct",
                 "data" => $user
-            ]);
+            ];
         } catch (\Throwable $th) {
+            $status = 400;
             $response = $this->CatchResponse();
         }
-        return response()->json($response);
+        return response()->json($response,$status);
     }
 
     /**
@@ -143,6 +172,7 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $response = $this->DefaultResponse();
+        $status = 200;
         try {
             $user = User::where('id', $request->id)
             ->update([
@@ -155,14 +185,15 @@ class UserController extends Controller
                 'role_id' => $request->role_id,
             ]);
 
-            $response = array(
-                'result' => 'correct',
+            $response = [
+                'status' => 'correct',
                 'message' => 'usuario actualizado'
-            );
+            ];
         } catch (\Throwable $th) {
+            $status = 400;
             $response = $this->CatchResponse();
         }        
-        return response()->json($response);
+        return response()->json($response,$status);
     }
 
     /**
@@ -175,19 +206,21 @@ class UserController extends Controller
     public function destroy(int $id)
     {
         $response = $this->DefaultResponse();
+        $status = 200;
         try {
             User::where('id', $id)
             ->update([
                 'active' => false,
                 'deleted_at' => date('Y-m-d H:i:s'),
             ]);
-            $response = array(
-                'result' => 'correct',
+            $response = [
+                'status' => 'correct',
                 'message' => 'usuario eliminado'
-            );
+            ];
         } catch (\Throwable $th) {
+            $status = 400;
             $response = $this->CatchResponse();
         }
-        return response()->json($response);
+        return response()->json($response,$status);
     }
 }

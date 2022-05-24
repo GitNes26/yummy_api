@@ -8,17 +8,19 @@ use Illuminate\Http\Request;
 class RoleController extends Controller
 {
     private function DefaultResponse() {
-        $response = array([
-            "result" => "incorrect",
-            "data" => "no se logro completar la petcion"
-        ]);
+        $response = [
+            "status" => false,
+            "message" => "no se logro completar la petcion.",
+            "data" => [],
+        ];
         return $response;
     }
     private function CatchResponse() {
-        $response = array([
-            "result" => "incorrect",
-            "data" => "no se logro completar la petcion"
-        ]);
+        $response = [
+            "status" => false,
+            "message" => "Ocurrio un error, verifica tus datos.",
+            "data" => [],
+        ];
         return $response;
     }
 
@@ -31,6 +33,7 @@ class RoleController extends Controller
     public function index()
     {
         $response = $this->DefaultResponse();
+        $status = 200;
         try {
             // $lista = DB::select('SELECT * FROM roles where role_active = 1');
             $list = Role::where('role_active', true)
@@ -38,14 +41,15 @@ class RoleController extends Controller
             ->orderBy('roles.role_name', 'ASC')
             ->get();
 
-            $response = array([
+            $response = [
                 "result" => "correct",
                 "data" => $list
-            ]);
+            ];
         } catch (\Throwable $th) {
+            $status = 400;
             $response = $this->CatchResponse();
         }
-        return response()->json($response);
+        return response()->json($response,$status);
     }
 
     /**
@@ -67,19 +71,21 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $response = $this->DefaultResponse();
+        $status = 200;
         try {
             $new_role = Role::create([
                 'role_name' => $request->role_name,
             ]);
 
-            $response = array(
+            $response = [
                 'result' => 'correct',
                 'message' => 'rol creado'
-            );
+            ];
         } catch (\Throwable $th) {
+            $status = 400;
             $response = $this->CatchResponse();
         }
-        return response()->json($response);
+        return response()->json($response,$status);
     }
 
     /**
@@ -93,19 +99,21 @@ class RoleController extends Controller
     public function show(Request $request, int $id)
     {
         $response = $this->DefaultResponse();
+        $status = 200;
         try {
             $role = Role::where('role_id', $id)
             ->select('roles.role_id','roles.role_name')
             ->get();
 
-            $response = array([
+            $response = [
                 "result" => "correct",
                 "data" => $role
-            ]);
+            ];
         } catch (\Throwable $th) {
+            $status = 400;
             $response = $this->CatchResponse();
         }
-        return response()->json($response);
+        return response()->json($response,$status);
     }
 
     /**
@@ -130,20 +138,22 @@ class RoleController extends Controller
     public function update(Request $request)
     {
         $response = $this->DefaultResponse();
+        $status = 200;
         try {
             $role = Role::where('role_id', $request->role_id)
             ->update([
                 'role_name' => $request->role_name,
             ]);
 
-            $response = array(
+            $response = [
                 'result' => 'correct',
                 'message' => 'rol actualizado'
-            );            
+            ];            
         } catch (\Throwable $th) {
+            $status = 400;
             $response = $this->catchResponse();
         }
-        return response()->json($response);
+        return response()->json($response,$status);
     }
 
     /**
@@ -156,6 +166,7 @@ class RoleController extends Controller
     public function destroy(int $id)
     {
         $response = $this->DefaultResponse();
+        $status = 200;
         try {
             Role::where('role_id', $id)
             ->update([
@@ -163,13 +174,14 @@ class RoleController extends Controller
                 'deleted_at' => date('Y-m-d H:i:s'),
             ]);
 
-            $response = array(
+            $response = [
                 'result' => 'correct',
                 'message' => 'rol eliminado'
-            );            
+            ];            
         } catch (\Throwable $th) {
+            $status = 400;
             $response = $this->CatchResponse();
         }
-        return response()->json($response);
+        return response()->json($response,$status);
     }
 }
