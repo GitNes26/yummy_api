@@ -3,6 +3,8 @@
 use App\Http\Controllers;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,4 +39,19 @@ Route::middleware('auth:sanctum')->controller(RoleController::class)->group(func
     Route::post('/roles','store');
     Route::put('/roles','update');
     Route::delete('/roles/{id}','destroy');
+});
+
+Route::middleware('auth:sanctum')->controller(ProductController::class)->group(function () {
+    Route::get('/products','index');
+    Route::get('/products/{id}','show');
+    Route::post('products','store');
+    Route::put('products','update');
+    Route::delete('products/{id}','destroy');
+});
+Route::middleware('auth:sanctum')->controller(RecipeController::class)->group(function () {
+    Route::get('/recipes','index');
+    Route::get('/recipes/{id}','show');
+    Route::post('/recipes','store');
+    Route::put('/recipes','update');
+    Route::delete('/recipes/{id}','destroy');
 });

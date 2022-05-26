@@ -36,7 +36,7 @@ class RoleController extends Controller
         $status = 200;
         try {
             // $lista = DB::select('SELECT * FROM roles where role_active = 1');
-            $list = Role::where('role_active', true)
+            $list = Role::where('role_active', true) #where('role_active','=',1)
             ->select('roles.role_id','roles.role_name')
             ->orderBy('roles.role_name', 'ASC')
             ->get();
