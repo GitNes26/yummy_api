@@ -3,28 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Models\ObjectResponse;
 use Illuminate\Http\Request;
+
 
 class RoleController extends Controller
 {
-    private function DefaultResponse() {
-        $response = [
-            "status" => false,
-            "message" => "no se logro completar la petcion.",
-            "data" => [],
-        ];
-        return $response;
-    }
-    private function CatchResponse() {
-        $response = [
-            "status" => false,
-            "message" => "Ocurrio un error, verifica tus datos.",
-            "data" => [],
-        ];
-        return $response;
-    }
-
-
     /**
      * Mostrar lista de todos los roles activos.
      *
@@ -32,8 +16,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             // $lista = DB::select('SELECT * FROM roles where role_active = 1');
             $list = Role::where('role_active', true) #where('role_active','=',1)
@@ -41,15 +24,14 @@ class RoleController extends Controller
             ->orderBy('roles.role_name', 'ASC')
             ->get();
 
-            $response = [
-                "result" => "correct",
-                "data" => $list
-            ];
-        } catch (\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | lista roles.');
+            data_set($response,'data',$list);
+
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response,$status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -70,22 +52,19 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $new_role = Role::create([
                 'role_name' => $request->role_name,
             ]);
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | rol registrado.');
+            data_set($response,'alert_text','Rol registrado');
 
-            $response = [
-                'result' => 'correct',
-                'message' => 'rol creado'
-            ];
-        } catch (\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response,$status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -98,22 +77,20 @@ class RoleController extends Controller
      */
     public function show(Request $request, int $id)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $role = Role::where('role_id', $id)
             ->select('roles.role_id','roles.role_name')
             ->get();
 
-            $response = [
-                "result" => "correct",
-                "data" => $role
-            ];
-        } catch (\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | rol encontrado.');
+            data_set($response,'data',$role);
+
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response,$status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -137,23 +114,21 @@ class RoleController extends Controller
      */
     public function update(Request $request)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $role = Role::where('role_id', $request->role_id)
             ->update([
                 'role_name' => $request->role_name,
             ]);
 
-            $response = [
-                'result' => 'correct',
-                'message' => 'rol actualizado'
-            ];            
-        } catch (\Throwable $th) {
-            $status = 400;
-            $response = $this->catchResponse();
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | rol actualizado.');
+            data_set($response,'alert_text','Rol actualizado');
+
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response,$status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -165,23 +140,20 @@ class RoleController extends Controller
      */
     public function destroy(int $id)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             Role::where('role_id', $id)
             ->update([
                 'role_active' => false,
                 'deleted_at' => date('Y-m-d H:i:s'),
             ]);
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | rol eliminado.');
+            data_set($response,'alert_text','Rol eliminado');
 
-            $response = [
-                'result' => 'correct',
-                'message' => 'rol eliminado'
-            ];            
-        } catch (\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response,$status);
+        return response()->json($response,$response["status_code"]);
     }
 }

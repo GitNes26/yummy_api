@@ -7,18 +7,42 @@ use Illuminate\Database\Eloquent\Model;
 
 class ObjectResponse extends Model
 {
-    public function DefaultResponse() {
+    public static function DefaultResponse() {
         $response = [
+            "status_code" => 500,
             "status" => false,
             "message" => "no se logro completar la petcion.",
+            "alert_icon" => "informative",
+            "alert_title" => "Lo sentimos.",
+            "alert_text" => "Hay un problema con el servidor. Intenete más tarde.",
             "data" => [],
         ];
         return $response;
     }
-    public function CatchResponse() {
+
+    public static function CatchResponse($message) {
+        $message ?? "Ocurrio un error, verifica tus datos.";
+
         $response = [
+            "status_code" => 400,
             "status" => false,
-            "message" => "Ocurrio un error, verifica tus datos.",
+            "message" => $message,
+            "alert_icon" => "error",
+            "alert_title" => "Oppss!",
+            "alert_text" => "Algo salio mal, verifica tus datos.",
+            "data" => [],
+        ];
+        return $response;
+    }
+
+    public static function CorrectResponse() {
+        $response = [
+            "status_code" => 200,
+            "status" => true,
+            "message" => "petición satisfactoria.",
+            "alert_icon" => "success",
+            "alert_title" => "EXITO!",
+            "alert_text" => "",
             "data" => [],
         ];
         return $response;
