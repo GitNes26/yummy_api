@@ -24,13 +24,17 @@ class UserController extends Controller
         if(!$user || !Hash::check($request->password, $user->password)) {
 
             throw ValidationException::withMessages([
-                'message.'=>['Credenciales incorrectas'],
+                'message'=>['Credenciales incorrectas'],
                 'alert_title.'=>['Credenciales incorrectas'],
                 'alert_text'=>['Credenciales incorrectas'],
             ]);
         }
         $token = $user->createToken($request->username, ['user'])->plainTextToken;
-        return response()->json(['token'=>$token], 201);
+        $response = ObjectResponse::CorrectResponse();
+        data_set($response,'message','peticion satisfactoria | usuario logeado.');
+        data_set($response,'token',$token);
+        data_set($response,'data',$user);
+        return response()->json($response,$response["status_code"]);
     }
 
 
