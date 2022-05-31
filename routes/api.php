@@ -5,6 +5,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,4 +55,12 @@ Route::middleware('auth:sanctum')->controller(RecipeController::class)->group(fu
     Route::post('/recipes','store');
     Route::put('/recipes','update');
     Route::delete('/recipes/{id}','destroy');
+});
+
+Route::middleware('auth:sanctum')->controller(CategoryController::class)->group(function (){
+    Route::get('/categories','index');
+    Route::get('/categories/{id}','show');
+    Route::post('/categories','store');
+    Route::put('/categories','update');
+    Route::delete('/categories/{id}','destroy');
 });

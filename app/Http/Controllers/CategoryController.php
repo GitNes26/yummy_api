@@ -3,26 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\ObjectResponse;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    private function DefaultResponse(){
-        $response =[
-            "status" => false,
-            "message" => "No se ha completado la petición.",
-            "data" => [],
-        ];
-        return $response;
-    }
-    private function CatchResponse(){
-        $response =[
-            "status"=>false,
-            "message"=>"Ocurrio un error, verifica tus datos",
-            "data"=>[],
-        ];
-        return $response;
-    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -30,23 +16,20 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $list = Category::where('category_active', true)
             ->select('categories.category_name', 'categories.category_description')
             ->orderBy('categories.category_name', 'ASC')
             ->get();
-            $response =[
-                "result" => "correct",
-                "data" => $list
-            ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message', 'peticion satisfactoria | lista de categorias:');
+            data_set($response, 'data', $list);
         }
-        catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch(\Exception $ex){
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response, $response["status_code"]);
     }
 
     /**
@@ -67,8 +50,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $new_recipe = Category::create([
                 'category_name' => $request->category_name,
@@ -76,16 +58,14 @@ class CategoryController extends Controller
                 'category_active'=> $request->category_active
             ]);
 
-            $response = [
-                'result'=>"correct",
-                'message' => 'categoria creada'
-            ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | categoria registrada.');
+            data_set($response,'alert_text','Categoria registrada');
         }
-        catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response, $response["status_code"]);
     }
 
     /**
@@ -96,23 +76,20 @@ class CategoryController extends Controller
      */
     public function show(Request $request, int $id)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try{
             $category = Category::where('category_id', $id)
             ->select('categories.category_name', 'categories.category_description')
              ->get();
              
-             $response = [
-                 "result" => "correct",
-                 "data" => $category
-             ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | categoria encontrada.');
+            data_set($response,'data',$category);
         }
-         catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+         catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -133,10 +110,9 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, int $id)
+    public function update(Request $request)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try{
             $recipe = Category::where('category_id', $id)
             ->update([
@@ -145,16 +121,14 @@ class CategoryController extends Controller
                 'category_active' => $request->category_active
             ]);
 
-            $response = [
-                'result' =>'correct',
-                'message' => 'receta actualizada'
-            ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | rol actualizado.');
+            data_set($response,'alert_text','Categoria actualizado');
         }
-        catch(\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -165,20 +139,20 @@ class CategoryController extends Controller
      */
     public function destroy(int $id)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
-
+        $response = ObjectResponse::DefaultResponse();
         try{
             Category::where('category_id', $id)
             ->update([
                 'category_active'=>false,
                 'deleted_at'=> date('Y-m-d H:i:s'),
             ]);
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response, 'message', 'petición satisfactoria.');
+            data_set($response, 'alert_text', 'Categoria eliminada.');
         }
-        catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch(\Exception $ex){
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response,$response["status_code"]);
     }
 }

@@ -3,26 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ObjectResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    private function DefaultResponse(){
-        $response =[
-            "status" => false,
-            "message" => "No se ha completado la petición.",
-            "data" => [],
-        ];
-        return $response;
-    }
-    private function CatchResponse(){
-        $response =[
-            "status"=>false,
-            "message"=>"Ocurrio un error, verifica tus datos",
-            "data"=>[],
-        ];
-        return $response;
-    }
     /**
      * Display a listing of the resource.
      *
@@ -30,24 +15,21 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $list = Product::where('product_active', true)
             ->select('products.product_name','products.category_id',
             'products.product_price')
             ->orderBy('products.product_name', 'DESC')
             ->get();
-            $response = [
-                "result" => "correct",
-                "data" => $list
-            ];
+             $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message', 'peticion satisfactoria | lista de productos:');
+            data_set($response, 'data', $list);
         }
-        catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch(\Exception $ex){
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response, $response["status_code"]);
     }
 
     /**
@@ -68,8 +50,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try{
             $new_product = Product::create([
                 'product_name' => $request->product_name,
@@ -77,16 +58,14 @@ class ProductController extends Controller
                 'product_price' => $request->product_price,
                 'product_active' => $request->product_active
             ]);
-            $response = [
-                'result' => 'correct',
-                'message' => 'producto creado',
-            ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response, 'message', 'peticion satisfactoria | producto registrado');
+            data_set($response, 'alert_text', 'producto registrado');
         }
-        catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch(\Exception $ex){
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response, $response["status_code"]);
     }
 
     /**
@@ -97,24 +76,21 @@ class ProductController extends Controller
      */
     public function show(Request $request, int $id)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try{
             $product = Product::where('product_id', $id)
             ->select('products.product_name, products.category_id',
             'products.product_active', 'products.product_price')
             ->get();
 
-            $response = [
-                "result" => "correct",
-                "data" => $product
-            ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | producto encontrado.');
+            data_set($response,'data',$product);
         }
-        catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -137,8 +113,7 @@ class ProductController extends Controller
      */
     public function update(Request $request)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try{
             $product = Product::where('product_id', $request->product_id)
             ->update([
@@ -148,16 +123,14 @@ class ProductController extends Controller
                 'product_active'=>$request->product_active
             ]);
 
-            $response = [
-                'result' => 'correct',
-                'message' => 'producto actualizado'
-            ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | producto encontrado.');
+            data_set($response,'data',$product);
         }
-        catch(\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -168,24 +141,20 @@ class ProductController extends Controller
      */
     public function destroy(int $id)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
-
+        $response = ObjectResponse::DefaultResponse();
         try{
             Product::where('product_id', $id)
             ->update([
                 'product_active' => false,
                 'deleted_at'=> date('Y-m-d H:i:s')
             ]);
-            $response = [
-                'result' => 'correct',
-                'message' => 'producto eliminado'
-            ];        
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response, 'message', 'petición satisfactoria.');
+            data_set($response, 'alert_text', 'Producto eliminado.');        
         }
-        catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch(\Exception $ex){
+            $response = ObjectResponse::CatchResponse();
         }
-        return response()->json($response, $status);
+        return response()->json($response,$response["status_code"]);
     }
 }

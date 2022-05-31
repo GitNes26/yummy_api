@@ -3,28 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Recipe;
+use App\Models\ObjectResponse;
 use Illuminate\Http\Request;
 
 class RecipeController extends Controller
 {
-
-    private function DefaultResponse(){
-        $response =[
-            "status" => false,
-            "message" => "No se ha completado la petición.",
-            "data" => [],
-        ];
-        return $response;
-    }
-    private function CatchResponse(){
-        $response =[
-            "status"=>false,
-            "message"=>"Ocurrio un error, verifica tus datos",
-            "data"=>[],
-        ];
-        return $response;
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -32,8 +15,7 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $list = Recipe::where('recipe_active', true)
             ->select('recipes.recipe_name', 
@@ -41,16 +23,14 @@ class RecipeController extends Controller
             'recipes.row_material_id','recipes.measure_id')
             ->orderBy('recipes.recipe_name', 'ASC')
             ->get();
-            $response =[
-                "result" => "correct",
-                "data" => $list
-            ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message', 'peticion satisfactoria | lista de recetas:');
+            data_set($response, 'data', $list);
         }
-        catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch(\Exception $ex){
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response, $response["status_code"]);
     }
 
     /**
@@ -71,8 +51,7 @@ class RecipeController extends Controller
      */
     public function store(Request $request)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try {
             $new_recipe = Recipe::create([
                 'recipe_name' => $request->recipe_name,
@@ -83,16 +62,14 @@ class RecipeController extends Controller
                 'recipe_active' => $request->recipe_active,
             ]);
 
-            $response = [
-                'result'=>"correct",
-                'message' => 'receta creada'
-            ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response, 'message', 'peticion satisfactoria | receta registrada');
+            data_set($response, 'alert_text', 'Rol registrado');
         }
-        catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch(\Exception $ex){
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response, $response["status_code"]);
     }
 
     /**
@@ -103,24 +80,21 @@ class RecipeController extends Controller
      */
     public function show(Request $request, int $id)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
+        $response = ObjectResponse::DefaultResponse();
         try{
             $recipe = Recipe::where('recipe_id', $id)
             ->select('recipes.recipe_name', 'recipes.product_id',
              'recipes.recipe_quantity','recipes.row_material_id','recipes.measure_id')
              ->get();
              
-             $response = [
-                 "result" => "correct",
-                 "data" => $recipe
-             ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | receta encontrado.');
+            data_set($response,'data',$recipe);
         }
-         catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -155,17 +129,14 @@ class RecipeController extends Controller
                 'row_material_id' => $request->row_material_id,
                 'recipe_active' => $request->recipe_active,
             ]);
-
-            $response = [
-                'result' =>'correct',
-                'message' => 'receta actualizada'
-            ];
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | receta encontrado.');
+            data_set($response,'data',$recipe);
         }
-        catch(\Throwable $th) {
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
-        return response()->json($response, $status);
+        return response()->json($response,$response["status_code"]);
     }
 
     /**
@@ -176,9 +147,7 @@ class RecipeController extends Controller
      */
     public function destroy(int $id)
     {
-        $response = $this->DefaultResponse();
-        $status = 200;
-
+        $response = ObjectResponse::DefaultResponse();
         try{
             Recipe::where('recipe_id', $id)
             ->update([
@@ -186,10 +155,9 @@ class RecipeController extends Controller
                 'deleted_at'=> date('Y-m-d H:i:s'),
             ]);
         }
-        catch(\Throwable $th){
-            $status = 400;
-            $response = $this->CatchResponse();
+        catch(\Exception $ex){
+            $response = ObjectResponse::CatchResponse();
         }
-        return response()->json($response, $status);
+        return response()->json($response,$response["status_code"]);
     }
 }
