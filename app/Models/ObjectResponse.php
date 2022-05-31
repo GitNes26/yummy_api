@@ -7,6 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ObjectResponse extends Model
 {
+    public static function CorrectResponse() {
+        $response = [
+            "status_code" => 200,
+            "status" => true,
+            "message" => "petición satisfactoria.",
+            "alert_icon" => "success",
+            "alert_title" => "EXITO!",
+            "alert_text" => "",
+            "data" => [],
+        ];
+        return $response;
+    }
+
     public static function DefaultResponse() {
         $response = [
             "status_code" => 500,
@@ -30,19 +43,6 @@ class ObjectResponse extends Model
             "alert_icon" => "error",
             "alert_title" => "Oppss!",
             "alert_text" => "Algo salio mal, verifica tus datos.",
-            "data" => [],
-        ];
-        return $response;
-    }
-
-    public static function CorrectResponse() {
-        $response = [
-            "status_code" => 200,
-            "status" => true,
-            "message" => "petición satisfactoria.",
-            "alert_icon" => "success",
-            "alert_title" => "EXITO!",
-            "alert_text" => "",
             "data" => [],
         ];
         return $response;

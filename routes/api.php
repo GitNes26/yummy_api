@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers;
+use App\Http\Controllers\BranchOfficeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -37,4 +38,12 @@ Route::middleware('auth:sanctum')->controller(RoleController::class)->group(func
     Route::post('/roles','store');
     Route::put('/roles','update');
     Route::delete('/roles/{id}','destroy');
+});
+
+Route::middleware('auth:sanctum')->controller(BranchOfficeController::class)->group(function () {
+    Route::get('/branch_offices','index');
+    Route::get('/branch_offices/{id}','show');
+    Route::post('/branch_offices','store');
+    Route::put('/branch_offices','update');
+    Route::delete('/branch_offices/{id}','destroy');
 });

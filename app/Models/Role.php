@@ -9,6 +9,10 @@ class Role extends Model
 {
     use HasFactory;
 
+    /**
+     * Los atributos que se pueden solicitar.
+     * @var array<int, string>
+     */
     protected $fillable = [
         'role_id',
         'role_name',

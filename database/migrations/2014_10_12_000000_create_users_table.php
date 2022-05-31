@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreignId('role_id');
             $table->rememberToken();
             $table->timestamps();
-            $table->dateTime('deleted_at')->nullable();            
+            $table->dateTime('deleted_at')->nullable();
         });
     }
 

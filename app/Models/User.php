@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Los atributos que son asignables.
      *
      * @var array<int, string>
      */
@@ -58,15 +58,15 @@ class User extends Authenticatable
      * Obtener rol asociado con el user.
      */
     public function role()
-    {
-        return $this->belongsTo(Role::class,'role_id','role_id'); //primero se declara FK y despues la PK del modelo asociado
+    {   //primero se declara FK y despues la PK del modelo asociado
+        return $this->belongsTo(Role::class,'role_id','role_id');
     }
 
     /**
      * Valores defualt para los campos especificados.
      * @var array
      */
-    // protected $attributes = [
-    //     'active' => true,
-    // ];
+    protected $attributes = [
+        'active' => true,
+    ];
 }

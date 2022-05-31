@@ -22,12 +22,7 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-
-        // DB::table('roles')->insert([ 'role_name' => 'Administrador']);
-        // DB::table('roles')->insert([ 'role_name' => 'Gerente']);
-        // DB::table('roles')->insert([ 'role_name' => 'Empleado']);
-        // DB::table('roles')->insert([ 'role_name' => 'Mesa']);
-
+        
         $this->call([
             RoleSeeder::class,
         ]);
