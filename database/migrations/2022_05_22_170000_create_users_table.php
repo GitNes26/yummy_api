@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Roles;
+use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone');
             $table->boolean('active')->default(true);
-            $table->foreignId('role_id');
+            $table->foreignId('role_id')->constrained('roles','role_id');
             $table->rememberToken();
             $table->timestamps();
             $table->dateTime('deleted_at')->nullable();
