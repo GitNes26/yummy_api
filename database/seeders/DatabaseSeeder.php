@@ -25,16 +25,13 @@ class DatabaseSeeder extends Seeder
         
         $this->call([
             RoleSeeder::class,
+            UserSeeder::class,
+
+            BranchOfficeSeeder::class,
+
+            OrderStatusSeeder::class,
         ]);
 
-        DB::table('users')->insert([
-            'name' => 'Admin',
-            'last_name' => 'Master',
-            'email' => 'admin@yummy.mx',
-            'username' => 'admin_yummy',
-            'password' => Hash::make('admin_yummy'),
-            'phone' => '(871)122-33-44',
-            'role_id' => 1,
-        ]);
+        
     }
 }

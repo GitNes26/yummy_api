@@ -4,6 +4,10 @@ use App\Http\Controllers;
 use App\Http\Controllers\BranchOfficeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +34,8 @@ Route::middleware('auth:sanctum')->controller(UserController::class)->group(func
     Route::post('/users','store');          //crear objeto
     Route::put('/users','update');          //actualizar objeto
     Route::delete('/users/{id}','destroy'); //eliminar (cambiar activo=false)
+
+    Route::delete('/logout/{id}','logout'); //cerrar sesión (eliminar los tokens creados)
 });
 
 Route::middleware('auth:sanctum')->controller(RoleController::class)->group(function () {
@@ -46,4 +52,37 @@ Route::middleware('auth:sanctum')->controller(BranchOfficeController::class)->gr
     Route::post('/branch_offices','store');
     Route::put('/branch_offices','update');
     Route::delete('/branch_offices/{id}','destroy');
+});
+Route::middleware('auth:sanctum')->controller(ProductController::class)->group(function () {
+    Route::get('/products','index');
+    Route::get('/products/{id}','show');
+    Route::post('products','store');
+    Route::put('products','update');
+    Route::delete('products/{id}','destroy');
+});
+Route::middleware('auth:sanctum')->controller(RecipeController::class)->group(function () {
+    Route::get('/recipes','index');
+    Route::get('/recipes/{id}','show');
+    Route::post('/recipes','store');
+    Route::put('/recipes','update');
+    Route::delete('/recipes/{id}','destroy');
+});
+
+Route::middleware('auth:sanctum')->controller(CategoryController::class)->group(function (){
+    Route::get('/categories','index');
+    Route::get('/categories/{id}','show');
+    Route::post('/categories','store');
+    Route::put('/categories','update');
+    Route::delete('/categories/{id}','destroy');
+});
+
+Route::middleware('auth:sanctum')->controller(OrderController::class)->group(function (){
+    Route::get('/orders','index');
+    Route::get('/orders/{id}','show');
+    Route::post('/orders','store');
+    Route::put('/orders','update');
+    Route::delete('/orders/{id}','destroy');
+
+    Route::put('/orders/statusUpdate','statusUpdate');
+
 });
