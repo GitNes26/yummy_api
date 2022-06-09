@@ -14,10 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->bigIncrements('category_id');
-            $table->string('category_name');
-            $table->string('category_description');
-            $table->string('category_active');
+            $table->bigIncrements('cat_id');
+            $table->string('cat_name');
+            $table->string('cat_description');
+            $table->string('cat_active');
             $table->timestamps();
         });
     }
