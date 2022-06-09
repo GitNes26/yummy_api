@@ -14,11 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->bigIncrements('product_id');
-            $table->string('product_name');
-            $table->foreignId('category_id');
-            $table->decimal('product_price', 11,2);
-            $table->boolean('product_active');
+            $table->bigIncrements('pro_id');
+            $table->string('pro_name');
+            $table->foreignId('pro_cat_id')->constrained('categories', 'cat_id');
+            $table->decimal('pro_price', 11,2);
+            $table->boolean('pro_active');
             $table->timestamps();
         });
     }

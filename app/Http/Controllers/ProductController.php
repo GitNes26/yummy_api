@@ -17,10 +17,10 @@ class ProductController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            $list = Product::where('product_active', true)
-            ->select('products.product_name','products.category_id',
-            'products.product_price')
-            ->orderBy('products.product_name', 'DESC')
+            $list = Product::where('products.pro_active', true)
+            ->select('products.pro_name','products.pro_cat_id',
+            'products.pro_price')
+            ->orderBy('products.pro_name', 'DESC')
             ->get();
              $response = ObjectResponse::CorrectResponse();
             data_set($response,'message', 'peticion satisfactoria | lista de productos:');
@@ -53,10 +53,10 @@ class ProductController extends Controller
         $response = ObjectResponse::DefaultResponse();
         try{
             $new_product = Product::create([
-                'product_name' => $request->product_name,
-                'category_id' => $request->category_id,
-                'product_price' => $request->product_price,
-                'product_active' => $request->product_active
+                'pro_name' => $request->pro_name,
+                'pro_cat_id' => $request->pro_cat_id,
+                'pro_price' => $request->pro_price,
+                'pro_active' => $request->pro_active
             ]);
             $response = ObjectResponse::CorrectResponse();
             data_set($response, 'message', 'peticion satisfactoria | producto registrado');
@@ -78,9 +78,9 @@ class ProductController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            $product = Product::where('product_id', $id)
-            ->select('products.product_name, products.category_id',
-            'products.product_active', 'products.product_price')
+            $product = Product::where('pro_id', $id)
+            ->select('products.pro_name, products.pro_cat_id',
+            'products.pro_active', 'products.pro_price')
             ->get();
 
             $response = ObjectResponse::CorrectResponse();
@@ -115,12 +115,12 @@ class ProductController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            $product = Product::where('product_id', $request->product_id)
+            $product = Product::where('pro_id', $request->pro_id)
             ->update([
-                'product_name'=>$request->product_name,
-                'category_id'=>$request->category_id,
-                'product_price'=>$request->product_price,
-                'product_active'=>$request->product_active
+                'pro_name'=>$request->pro_name,
+                'pro_cat_id'=>$request->pro_cat_id,
+                'pro_price'=>$request->pro_price,
+                'pro_active'=>$request->pro_active
             ]);
 
             $response = ObjectResponse::CorrectResponse();
@@ -143,9 +143,9 @@ class ProductController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            Product::where('product_id', $id)
+            Product::where('pro_id', $id)
             ->update([
-                'product_active' => false,
+                'pro_active' => false,
                 'deleted_at'=> date('Y-m-d H:i:s')
             ]);
             $response = ObjectResponse::CorrectResponse();
