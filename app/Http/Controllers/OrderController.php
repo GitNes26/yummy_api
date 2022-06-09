@@ -58,7 +58,19 @@ class OrderController extends Controller
      */
     public function show(Request $request, int $id)
     {
-        //
+        $response = ObjectResponse::DefaultResponse();
+        try{
+            $order = Order::where('order_id', $id)
+            ->select('order_employee_id','order_table_id','order_bo_id', 'order_os_id', 'order_active', 'deleted_at')
+            ->get();
+
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | orden encontrada.');
+            data_set($response,'data',$order);
+        }catch(\Exception $ex){
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
+        }
+        return response()->json($response,$response["status_code"]);
     }
 
     /**

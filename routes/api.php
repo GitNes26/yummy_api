@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -64,3 +65,13 @@ Route::middleware('auth:sanctum')->controller(CategoryController::class)->group(
     Route::put('/categories','update');
     Route::delete('/categories/{id}','destroy');
 });
+
+/*Route::middleware('auth:sanctum')->controller(OrderController::class)->group(function (){
+    Route::get('/orders','index');
+    Route::get('/orders/{id}','show');
+    Route::delete('/orders/{id}','destroy');
+});*/
+
+Route::get('/orders', [OrderController::class, 'index']);
+Route::get('/orders/{id}', [OrderController::class, 'show']);
+Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
