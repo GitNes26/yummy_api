@@ -56,7 +56,7 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order)
+    public function show(Request $request, int $id)
     {
         //
     }
@@ -90,8 +90,16 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Order $order)
+    public function destroy(int $id)
     {
-        //
+        $response = ObjectResponse::DefaultResponse();
+        try{
+            Order::where('order_id', $id)
+            ->destroy();
+            $response = ObjectResponse::CorrectResponse();
+        } catch(\Exception $ex){
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
+        }
+        return response()->json($response,$response["status_code"]);
     }
 }
