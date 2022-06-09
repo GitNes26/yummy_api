@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->bigIncrements('cat_id');
-            $table->string('cat_name');
-            $table->string('cat_description');
-            $table->string('cat_active');
+        Schema::create('order_status', function (Blueprint $table) {
+            $table->bigIncrements('os_id');
+            $table->string('os_name');
+            $table->boolean('os_active')->default(true);
             $table->timestamps();
+            $table->dateTime('deleted_at')->nullable();
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('order_statuses');
     }
 };

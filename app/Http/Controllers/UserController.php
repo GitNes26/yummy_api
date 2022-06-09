@@ -11,7 +11,13 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
-    public function login (Request $request)
+    /**
+     * Metodo para validar credenciales e
+     * inicar sesión
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function login(Request $request)
     {
         $request->validate([
             'username'=>'required',
@@ -37,6 +43,26 @@ class UserController extends Controller
         return response()->json($response,$response["status_code"]);
     }
 
+    /**
+     * Metodo para cerrar sesión.
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(int $id)
+    {
+        try {
+            DB::table('personal_access_tokens')->where('tokenable_id', $id)->delete();
+            
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | sesión cerrada.');
+            data_set($response,'alert_title','Bye!');
+            
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
+        }
+        return response()->json($response,$response["status_code"]);
+    }
+
 
     /**
      * Mostrar lista de todos los usuarios activos del
@@ -55,7 +81,7 @@ class UserController extends Controller
             ->get();
             
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | lista usuarios.');
+            data_set($response,'message','peticion satisfactoria | lista de usuarios.');
             data_set($response,'data',$list);
 
         } catch (\Exception $ex) {

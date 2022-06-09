@@ -14,13 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('recipes', function (Blueprint $table) {
-            $table->bigIncrements('recipe_id');
-            $table->string("recipe_name");
-            $table->decimal('recipe_quantity', 11, 2)->nullable()->default(0);
-            $table->foreignId("measure_id");
-            $table->foreignId("row_material_id");
-            $table->foreignId("product_id");
-            $table->boolean('recipe_active');
+            $table->bigIncrements('rec_id');
+            $table->string("rec_name");
+            $table->decimal('rec_quantity_usage', 11, 2)->nullable()->default(0);
+            $table->enum("rec_measure",["kilogramo", "gramos", "litros", "mililitros", "miligramos"]);
+            $table->foreignId("rec_row_material_id")->constrained("row_materials", "rm_id");
+            $table->foreignId("rec_pro_id")->constrained("products", "pro_id");
+            $table->boolean('rec_active')->default(true);
             $table->timestamps();
         });
     }

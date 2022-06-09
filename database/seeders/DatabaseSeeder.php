@@ -22,24 +22,16 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-
-        // DB::table('roles')->insert([ 'role_name' => 'Administrador']);
-        // DB::table('roles')->insert([ 'role_name' => 'Gerente']);
-        // DB::table('roles')->insert([ 'role_name' => 'Empleado']);
-        // DB::table('roles')->insert([ 'role_name' => 'Mesa']);
-
+        
         $this->call([
             RoleSeeder::class,
+            UserSeeder::class,
+
+            BranchOfficeSeeder::class,
+
+            OrderStatusSeeder::class,
         ]);
 
-        DB::table('users')->insert([
-            'name' => 'Admin',
-            'last_name' => 'Master',
-            'email' => 'admin@yummy.mx',
-            'username' => 'admin_yummy',
-            'password' => Hash::make('admin_yummy'),
-            'phone' => '(871)122-33-44',
-            'role_id' => 1,
-        ]);
+        
     }
 }

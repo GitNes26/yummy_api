@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers;
+use App\Http\Controllers\BranchOfficeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RecipeController;
@@ -33,6 +34,8 @@ Route::middleware('auth:sanctum')->controller(UserController::class)->group(func
     Route::post('/users','store');          //crear objeto
     Route::put('/users','update');          //actualizar objeto
     Route::delete('/users/{id}','destroy'); //eliminar (cambiar activo=false)
+
+    Route::delete('/logout/{id}','logout'); //cerrar sesión (eliminar los tokens creados)
 });
 
 Route::middleware('auth:sanctum')->controller(RoleController::class)->group(function () {
@@ -43,6 +46,13 @@ Route::middleware('auth:sanctum')->controller(RoleController::class)->group(func
     Route::delete('/roles/{id}','destroy');
 });
 
+Route::middleware('auth:sanctum')->controller(BranchOfficeController::class)->group(function () {
+    Route::get('/branch_offices','index');
+    Route::get('/branch_offices/{id}','show');
+    Route::post('/branch_offices','store');
+    Route::put('/branch_offices','update');
+    Route::delete('/branch_offices/{id}','destroy');
+});
 Route::middleware('auth:sanctum')->controller(ProductController::class)->group(function () {
     Route::get('/products','index');
     Route::get('/products/{id}','show');
@@ -66,12 +76,13 @@ Route::middleware('auth:sanctum')->controller(CategoryController::class)->group(
     Route::delete('/categories/{id}','destroy');
 });
 
-/*Route::middleware('auth:sanctum')->controller(OrderController::class)->group(function (){
+Route::middleware('auth:sanctum')->controller(OrderController::class)->group(function (){
     Route::get('/orders','index');
     Route::get('/orders/{id}','show');
+    Route::post('/orders','store');
+    Route::put('/orders','update');
     Route::delete('/orders/{id}','destroy');
-});*/
 
-Route::get('/orders', [OrderController::class, 'index']);
-Route::get('/orders/{id}', [OrderController::class, 'show']);
-Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
+    Route::put('/orders/statusUpdate','statusUpdate');
+
+});

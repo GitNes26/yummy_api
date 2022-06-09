@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use App\Models\Branch_office;
 use App\Models\ObjectResponse;
 use Illuminate\Http\Request;
 
-
-class RoleController extends Controller
+class BranchOfficeController extends Controller
 {
     /**
-     * Mostrar lista de todos los roles activos.
+     * Mostrar lista de todas las sucursales activas.
      *
      * @return \Illuminate\Http\Response
      */
@@ -18,14 +17,12 @@ class RoleController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            // $lista = DB::select('SELECT * FROM roles where role_active = 1');
-            $list = Role::where('role_active', true) #where('role_active','=',1)
-            ->select('roles.role_id','roles.role_name')
-            ->orderBy('roles.role_name', 'ASC')
+            $list = Branch_office::where('bo_active', true)
+            ->select('bo_id','bo_name','bo_country','bo_state','bo_city','bo_address')
             ->get();
 
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | lista roles.');
+            data_set($response,'message','peticion satisfactoria | lista sucursales.');
             data_set($response,'data',$list);
 
         } catch (\Exception $ex) {
@@ -39,13 +36,13 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function create(Request $request)
-    // {
-        
-    // }
+    public function create()
+    {
+        //
+    }
 
     /**
-     * Crear un nuevo rol.
+     * Crear una nueva sucursal.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -54,13 +51,16 @@ class RoleController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            $new_role = Role::create([
-                'role_name' => $request->role_name,
+            $new_branch_office = Branch_office::create([
+                'bo_name' => $request->bo_name,
+                'bo_country' => $request->bo_country,
+                'bo_state' => $request->bo_state,
+                'bo_city' => $request->bo_city,
+                'bo_address' => $request->bo_address,
             ]);
-            
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | rol registrado.');
-            data_set($response,'alert_text','Rol registrado');
+            data_set($response,'message','peticion satisfactoria | sucursal registrada.');
+            data_set($response,'alert_text','Sucursal registrado');
 
         } catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());
@@ -69,9 +69,9 @@ class RoleController extends Controller
     }
 
     /**
-     * Mostrar un rol especifico.
+     * Mostrar una sucursal especifica.
      *
-     * @param  \App\Models\Role  $role
+     * @param  \App\Models\Branch_office  $branch_office
      * @param  \Illuminate\Http\Request  $request
      * @param   int $id
      * @return \Illuminate\Http\Response
@@ -80,13 +80,13 @@ class RoleController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            $role = Role::where('role_id', $id)
-            ->select('roles.role_id','roles.role_name')
+            $user = Branch_office::where('bo_id', $id)
+            ->select('bo_id','bo_name','bo_country','bo_state','bo_city','bo_address')
             ->get();
 
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | rol encontrado.');
-            data_set($response,'data',$role);
+            data_set($response,'message','peticion satisfactoria | sucursal encontrada.');
+            data_set($response,'data',$user);
 
         } catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());
@@ -97,45 +97,48 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Role  $role
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Branch_office  $branch_office
      * @return \Illuminate\Http\Response
      */
-    // public function edit(Request $request)
-    // {
-    //     //
-    // }
+    public function edit(Branch_office $branch_office)
+    {
+        //
+    }
 
     /**
-     * Actualizar un rol especifico.
+     * Actualizar una sucursal especifica.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Role  $role
+     * @param  \App\Models\Branch_office  $branch_office
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            $role = Role::where('role_id', $request->role_id)
+            $user = Branch_office::where('bo_id', $request->bo_id)
             ->update([
-                'role_name' => $request->role_name,
+                'bo_name' => $request->bo_name,
+                'bo_country' => $request->bo_country,
+                'bo_state' => $request->bo_state,
+                'bo_city' => $request->bo_city,
+                'bo_address' => $request->bo_address,
             ]);
 
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | rol actualizado.');
-            data_set($response,'alert_text','Rol actualizado');
+            data_set($response,'message','peticion satisfactoria | sucursal actualizado.');
+            data_set($response,'alert_text','Sucursal actualizado');
 
         } catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());
-        }
+        }        
         return response()->json($response,$response["status_code"]);
     }
 
     /**
-     * Eliminar (cambiar estado activo=false) un rol especidifco.
+     * "Eliminar" (cambiar estado activo=false) una sucursal especidifca.
      *
-     * @param  \App\Models\Role  $role
+     * @param  \App\Models\Branch_office  $branch_office
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
@@ -143,14 +146,14 @@ class RoleController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            Role::where('role_id', $id)
+            Branch_office::where('bo_id', $id)
             ->update([
-                'role_active' => false,
+                'bo_active' => false,
                 'deleted_at' => date('Y-m-d H:i:s'),
             ]);
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | rol eliminado.');
-            data_set($response,'alert_text','Rol eliminado');
+            data_set($response,'message','peticion satisfactoria | sucursal eliminada.');
+            data_set($response,'alert_text','Sucursal eliminada');
 
         } catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());

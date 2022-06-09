@@ -17,11 +17,11 @@ class RecipeController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            $list = Recipe::where('recipe_active', true)
-            ->select('recipes.recipe_name', 
-            'recipes.product_id', 'recipes.recipe_quantity',
-            'recipes.row_material_id','recipes.measure_id')
-            ->orderBy('recipes.recipe_name', 'ASC')
+            $list = Recipe::where('rec_active', true)
+            ->select('recipes.rec_name', 
+            'recipes.rec_pro_id', 'recipes.rec_quantity_usage',
+            'recipes.rec_row_material_id','recipes.rec_measure')
+            ->orderBy('recipes.rec_name', 'ASC')
             ->get();
             $response = ObjectResponse::CorrectResponse();
             data_set($response,'message', 'peticion satisfactoria | lista de recetas:');
@@ -54,17 +54,17 @@ class RecipeController extends Controller
         $response = ObjectResponse::DefaultResponse();
         try {
             $new_recipe = Recipe::create([
-                'recipe_name' => $request->recipe_name,
-                'product_id' => $request->product_id,
-                'recipe_quantity' => $request->recipe_quantity,
-                'measure_id' => $request->measure_id,
-                'row_material_id' => $request->row_material_id,
-                'recipe_active' => $request->recipe_active,
+                'rec_name' => $request->rec_name,
+                'rec_product_id' => $request->product_id,
+                'rec_quantity_usage' => $request->rec_quantity_usage,
+                'rec_measure' => $request->rec_measure,
+                'rec_row_material_id' => $request->rec_row_material_id,
+                'rec_active' => $request->rec_active,
             ]);
 
             $response = ObjectResponse::CorrectResponse();
             data_set($response, 'message', 'peticion satisfactoria | receta registrada');
-            data_set($response, 'alert_text', 'Rol registrado');
+            data_set($response, 'alert_text', 'receta registrada');
         }
         catch(\Exception $ex){
             $response = ObjectResponse::CatchResponse($ex->getMessage());
@@ -82,13 +82,13 @@ class RecipeController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            $recipe = Recipe::where('recipe_id', $id)
-            ->select('recipes.recipe_name', 'recipes.product_id',
-             'recipes.recipe_quantity','recipes.row_material_id','recipes.measure_id')
+            $recipe = Recipe::where('rec_id', $id)
+            ->select('recipes.rec_name', 'recipes.rec_pro_id',
+             'recipes.rec_quantity_usage','recipes.rec_row_material_id','recipes.rec_measure')
              ->get();
              
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | receta encontrado.');
+            data_set($response,'message','peticion satisfactoria | receta encontrada.');
             data_set($response,'data',$recipe);
         }
         catch (\Exception $ex) {
@@ -120,17 +120,17 @@ class RecipeController extends Controller
         $response = $this->DefaultResponse();
         $status = 200;
         try{
-            $recipe = Recipe::where('recipe_id', $id)
+            $recipe = Recipe::where('rec_id', $id)
             ->update([
-                'recipe_name' => $request->recipe_name,
-                'product_id' => $request->product_id,
-                'recipe_quantity' => $request->recipe_quantity,
-                'measure_id' => $request->measure_id,
-                'row_material_id' => $request->row_material_id,
-                'recipe_active' => $request->recipe_active,
+                'rec_name' => $request->rec_name,
+                'rec_pro_id' => $request->rec_pro_id,
+                'rec_quantity_usage' => $request->rec_quantity_usage,
+                'rec_measure' => $request->rec_measure,
+                'rec_row_material_id' => $request->rec_row_material_id,
+                'rec_active' => $request->rec_active,
             ]);
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | receta encontrado.');
+            data_set($response,'message','peticion satisfactoria | receta actualizada.');
             data_set($response,'data',$recipe);
         }
         catch (\Exception $ex) {
@@ -149,9 +149,9 @@ class RecipeController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            Recipe::where('recipe_id', $id)
+            Recipe::where('rec_id', $id)
             ->update([
-                'recipe_active'=>false,
+                'rec_active'=>false,
                 'deleted_at'=> date('Y-m-d H:i:s'),
             ]);
         }

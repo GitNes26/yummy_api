@@ -2,31 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
 use App\Models\ObjectResponse;
+use App\Models\Order_status;
 use Illuminate\Http\Request;
 
-
-class RoleController extends Controller
+class OrderStatusController extends Controller
 {
     /**
-     * Mostrar lista de todos los roles activos.
-     *
+     * Mostrar lista de todos los status orden activos.
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            // $lista = DB::select('SELECT * FROM roles where role_active = 1');
-            $list = Role::where('role_active', true) #where('role_active','=',1)
-            ->select('roles.role_id','roles.role_name')
-            ->orderBy('roles.role_name', 'ASC')
-            ->get();
+            $list = Order_status::where('os_active',true)->select('os_id','os_name')->get();
 
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | lista roles.');
-            data_set($response,'data',$list);
+            data_set($response,'message','peticion satisfactoria | lista estados de order.');
+            data_set($response,'data', $list);
 
         } catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());
@@ -35,18 +29,16 @@ class RoleController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
+     * 
      * @return \Illuminate\Http\Response
      */
-    // public function create(Request $request)
+    // public function create()
     // {
-        
+    //     //
     // }
 
     /**
-     * Crear un nuevo rol.
-     *
+     * Crear un nuevo status orden.
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -54,13 +46,12 @@ class RoleController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            $new_role = Role::create([
-                'role_name' => $request->role_name,
+            $new_order_status = Order_status::create([
+                'os_name' => $request->os_name
             ]);
-            
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | rol registrado.');
-            data_set($response,'alert_text','Rol registrado');
+            data_set($response, 'message', 'peticion satisfactoria | usuario registrado');
+            data_set($response, 'alert_text', 'Status orden registrado');
 
         } catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());
@@ -69,24 +60,22 @@ class RoleController extends Controller
     }
 
     /**
-     * Mostrar un rol especifico.
-     *
-     * @param  \App\Models\Role  $role
+     * Mostrar un status orden especifico.
+     * @param  \App\Models\Order_status  $order_status
      * @param  \Illuminate\Http\Request  $request
      * @param   int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, int $id)
+    public function show(Order_status $order_status, int $id)
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            $role = Role::where('role_id', $id)
-            ->select('roles.role_id','roles.role_name')
-            ->get();
+            $order_status = Order_status::where('os_id',$id)
+            ->select('os_id','os_name')->get();
 
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | rol encontrado.');
-            data_set($response,'data',$role);
+            data_set($response,'message','peticion satisfactoria | status orden encontrado.');
+            data_set($response,'data',$order_status);
 
         } catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());
@@ -97,45 +86,41 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Role  $role
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Order_status  $order_status
      * @return \Illuminate\Http\Response
      */
-    // public function edit(Request $request)
+    // public function edit(Order_status $order_status)
     // {
     //     //
     // }
 
     /**
-     * Actualizar un rol especifico.
-     *
+     * Actualizar un status orden especifico.
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Role  $role
+     * @param  \App\Models\Order_status  $order_status
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, Order_status $order_status)
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            $role = Role::where('role_id', $request->role_id)
+            $order_staus = Order_status::where('os_id',$request->os_id)
             ->update([
-                'role_name' => $request->role_name,
+                'os_name' => $request->os_name
             ]);
 
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | rol actualizado.');
-            data_set($response,'alert_text','Rol actualizado');
-
+            data_set($response,'message','peticion satisfactoria | status orden actualizado.');
+            data_set($response,'data','Status orden actualizado.');
         } catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());
-        }
+        }        
         return response()->json($response,$response["status_code"]);
     }
 
     /**
-     * Eliminar (cambiar estado activo=false) un rol especidifco.
-     *
-     * @param  \App\Models\Role  $role
+     * "Eliminar" (cambiar estado activo=false) un status orden especidifco.
+     * @param  \App\Models\Order_status  $order_status
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
@@ -143,15 +128,16 @@ class RoleController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            Role::where('role_id', $id)
+            Order_status::where('os_id',$id)
             ->update([
-                'role_active' => false,
-                'deleted_at' => date('Y-m-d H:i:s'),
+                'os_active' => false,
+                'deleted_at' => date('Y-m-d H:i:s')
             ]);
-            $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | rol eliminado.');
-            data_set($response,'alert_text','Rol eliminado');
 
+            $response = Order_status::CorrectResponse();
+            data_set($response,'message','petición satisfactoria | status orden eliminado.');
+            data_set($response,'alert_text','Status orden eliminado');
+            
         } catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());
         }

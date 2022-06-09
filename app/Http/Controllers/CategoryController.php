@@ -18,9 +18,9 @@ class CategoryController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            $list = Category::where('category_active', true)
-            ->select('categories.category_name', 'categories.category_description')
-            ->orderBy('categories.category_name', 'ASC')
+            $list = Category::where('cat_active', true)
+            ->select('categories.cat_name', 'categories.cat_description')
+            ->orderBy('categories.cat_name', 'ASC')
             ->get();
             $response = ObjectResponse::CorrectResponse();
             data_set($response,'message', 'peticion satisfactoria | lista de categorias:');
@@ -53,9 +53,9 @@ class CategoryController extends Controller
         $response = ObjectResponse::DefaultResponse();
         try {
             $new_recipe = Category::create([
-                'category_name' => $request->category_name,
-                'category_description' => $request->category_description,
-                'category_active'=> $request->category_active
+                'cat_name' => $request->cat_name,
+                'cat_description' => $request->cat_description,
+                'cat_active'=> $request->cat_active
             ]);
 
             $response = ObjectResponse::CorrectResponse();
@@ -78,8 +78,8 @@ class CategoryController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            $category = Category::where('category_id', $id)
-            ->select('categories.category_name', 'categories.category_description')
+            $category = Category::where('cat_id', $id)
+            ->select('categories.cat_name', 'categories.cat_description')
              ->get();
              
             $response = ObjectResponse::CorrectResponse();
@@ -114,16 +114,16 @@ class CategoryController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            $recipe = Category::where('category_id', $id)
+            $recipe = Category::where('cat_id', $id)
             ->update([
-                'category_name' => $request->category_name,
-                'category_description' => $request->category_description,
-                'category_active' => $request->category_active
+                'cat_name' => $request->cat_name,
+                'cat_description' => $request->cat_description,
+                'cat_active' => $request->cat_active
             ]);
 
             $response = ObjectResponse::CorrectResponse();
             data_set($response,'message','peticion satisfactoria | rol actualizado.');
-            data_set($response,'alert_text','Categoria actualizado');
+            data_set($response,'alert_text','Categoria actualizada');
         }
         catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());
@@ -141,9 +141,9 @@ class CategoryController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            Category::where('category_id', $id)
+            Category::where('cat_id', $id)
             ->update([
-                'category_active'=>false,
+                'cat_active'=>false,
                 'deleted_at'=> date('Y-m-d H:i:s'),
             ]);
             $response = ObjectResponse::CorrectResponse();
