@@ -31,7 +31,7 @@ class OrderController extends Controller
             $response = ObjectResponse::CorrectResponse();
             data_set($response,'message','peticion satisfactoria | status actualizado a la orden.');
             data_set($response,'alert_title','Orden actualizada');
-            data_set($response,'alert_text',"status de orden $new_status");
+            data_set($response,'alert_text',"status de orden: $new_status->os_name");
 
         } catch (\Exception $ex) {
             $response = ObjectResponse::CatchResponse($ex->getMessage());
@@ -97,8 +97,12 @@ class OrderController extends Controller
             ]);
 
             $new_order->save();
+            $order_id = $new_order->order_id;
+            // $order_detail = new OrderDetailsController($order_id);
+
+
             $response = ObjectResponse::CorrectResponse();
-            data_set($response,'message','peticion satisfactoria | orden registrada.');
+            data_set($response,'message',"peticion satisfactoria | orden registrada $order_id.");
             data_set($response,'alert_text','Tu orden esta en cola.');
 
         } catch (\Exception $ex) {
