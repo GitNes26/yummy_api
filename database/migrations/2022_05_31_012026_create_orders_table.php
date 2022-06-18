@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('order_id');
-            $table->foreignId('order_employee_id')->constrained('users');
+            $table->foreignId('order_employee_id')->constrained('users')->nullable();
             $table->foreignId('order_table_id')->constrained('users');
             $table->foreignId('order_bo_id')->constrained('branch_offices','bo_id');
             $table->foreignId('order_os_id')->constrained('order_status','os_id');
