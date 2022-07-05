@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('row_materials', function (Blueprint $table) {
             $table->bigIncrements("rm_id");
             $table->string("rm_name");
-            //$table->foreignId("rm_prov_id")->constrained(); PROVEEDORES
+            $table->foreignId("rm_prov_id")->constrained(); //PROVEEDORES
             $table->enum("rm_measure_unity", ["kilogramo", "gramos", "litros", "mililitros", "miligramos", "toneladas", "galones"]);
             $table->decimal("rm_unity_quantity",11,2)->default(0.00);
             $table->integer("rm_stock")->default(1);

@@ -11,6 +11,7 @@ class RowMaterial extends Model
     protected $fillable = [
         'rm_name',
         'rm_measure_unity',
+        'rm_prov_id',
         'rm_unity_quantity',
         'rm_stock',
         'rm_unit_price',
@@ -32,8 +33,8 @@ class RowMaterial extends Model
          *
          * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
          */
-    /*public function provider(): BelongsTo
+    public function provider(): BelongsTo
     {
         return $this->belongsTo(Provider::class, 'rm_prov_id', 'prov_id');
-    }*/
+    }
 }
