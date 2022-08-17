@@ -18,10 +18,12 @@ class OrderDetailsController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            $list = Order_details::where('order_status.os_name','=','En cola')
-            ->join('orders as O', 'O.order_id','=','order_details.od_order_id')
-            ->join('recipes as R', 'R.rec_id', '=', 'order_details.od_rec_id')
+            $list = Order_details::where('OS.os_name','=',"pendiente")
+            ->from('order_details as OD')
+            ->join('orders as O', 'O.order_id','=','OD.od_order_id')
+            ->join('recipes as R', 'R.rec_id', '=', 'OD.od_rec_id')
             ->join('products as P', 'P.pro_id', '=', 'R.rec_pro_id')
+            ->join('order_status as OS', 'OS.os_id','=','O.order_os_id')
             ->select('od_order_id','od_quantity', 'R.rec_quantity_usage', 'od_complement', 'R.rec_milk', 'od_names')
             ->get();
 
@@ -83,10 +85,12 @@ class OrderDetailsController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            $list = Order_details::where('order_status.os_name', 'En cola' ,'and', 'order_details.od_order_id', $id)
-            ->join('orders as O', 'O.order_id','=','order_details.od_order_id')
-            ->join('recipes as R', 'R.rec_id', '=', 'order_details.od_rec_id')
+            $list = Order_details::where('order_status.os_name', 'En cola' ,'and', 'OD.od_order_id', $id)
+            ->from('order_details as OD')
+            ->join('orders as O', 'O.order_id','=','OD.od_order_id')
+            ->join('recipes as R', 'R.rec_id', '=', 'OD.od_rec_id')
             ->join('products as P', 'P.pro_id', '=', 'R.rec_pro_id')
+            ->join('order_status as OS', 'OS.os_id','=','O.order_os_id')
             ->select('od_quantity', 'R.rec_quantity_usage', 'od_complement', 'R.rec_milk', 'od_names')
             ->get();
             $response = ObjectResponse::CorrectResponse();

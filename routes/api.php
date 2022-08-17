@@ -100,7 +100,7 @@ Route::middleware('auth:sanctum')->controller(RecipeController:: class)->group(f
 Route::middleware('auth:sanctum')->controller(OrderDetailsController:: class)->group(function (){
     Route::get('/orderD','index');
     Route::get('/orderD/{id}','show');
-    Route::get('/orderD','store');
-    Route::get('/orderD','update');
-    Route::get('/orderD{id}','destroy');
+    Route::post('/orderD','store');
+    Route::put('/orderD','update');
+    Route::delete('/orderD{id}','destroy');
 });
