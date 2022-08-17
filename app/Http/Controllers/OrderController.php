@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ObjectResponse;
 use App\Models\Order;
+use App\Models\Order_details;
+use App\Models\Recipe;
 use App\Models\Order_status;
 use Illuminate\Http\Request;
 
@@ -87,19 +89,59 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        // if(!empty($request->od_name) && is_array($request->od_name)){
+        //     $nombres = array();
+        //     foreach ($request->od_name as $nombre){
+        //         $nombres[] = $nombre;
+        //     }
+        // }else{
+
+        // }
+        // $concatenado = "";
+        // $i = 1;
+        // while ($row = $nombres){
+        //     if($request->od_quantity != $i){
+        //         $concatenado = $concatenado + $row + ",";
+        //         $i++;
+        //     }else{
+        //         $concatenado = $concatenado + $row;
+        //     }
+            
+        // }
+        
         $response = ObjectResponse::DefaultResponse();
+        
         try {
+            
             $new_order = Order::create([
                 'order_employee_id' => $request->order_employee_id,
                 'order_table_id' => $request->order_table_id,
                 'order_bo_id' => $request->order_bo_id,
-                'order_os_id' => $request->order_os_id,
+                'order_os_id' => $request->order_os_id
             ]);
-
             $new_order->save();
             $order_id = $new_order->order_id;
-            // $order_detail = new OrderDetailsController($order_id);
-
+            $new_recipe = Recipe::create([
+                'rec_product_id' => $request->rec_product_id,
+                'rec_milk' => $request->rec_milk,
+                'rec_quantity_usage' => $request->rec_quantity_usage,
+                'rec_measure' => $request->rec_measure,
+                'rec_pro_id'=> $request->rec_pro_id
+            ]);
+            $new_recipe->save();
+            $recipe_id = $new_recipe->rec_id;
+            $new_od = Order_details::create([
+                'od_order_id' => $order_id,
+                'od_recipe_id' => $recipe_id,
+                'od_unit_price' => $request->od_unit_price,
+                'od_quantity' => $request->od_quantity,
+                'od_complement' => $request->od_complements,
+                'od_names' => $request->od_name
+            ]);
+            $new_od->save();
+            //data_set($request,'order_id',$order_id);
+            //return redirect()->action([RecipeController::class, 'store'], $request);
+           // return redirect()->route('recipes', $request);
 
             $response = ObjectResponse::CorrectResponse();
             data_set($response,'message',"peticion satisfactoria | orden registrada $order_id.");

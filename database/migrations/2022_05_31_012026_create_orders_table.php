@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('order_employee_id')->constrained('users')->nullable();
             $table->foreignId('order_table_id')->constrained('users');
             $table->foreignId('order_bo_id')->constrained('branch_offices','bo_id');
-            $table->foreignId('order_os_id')->constrained('order_status','os_id');
+            $table->foreignId('order_os_id')->constrained('order_status','os_id')->default(1);
             $table->dateTime('order_date')->default(now());
             $table->boolean('order_active')->default(true);
             $table->timestamps();

@@ -15,6 +15,7 @@ class OrderStatusSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('order_status')->insert([ 'os_name' => 'pendiente' ]);
         DB::table('order_status')->insert([ 'os_name' => 'En cola' ]);
         DB::table('order_status')->insert([ 'os_name' => 'Recibida' ]);
         DB::table('order_status')->insert([ 'os_name' => 'En Proceso' ]);

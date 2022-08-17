@@ -86,3 +86,11 @@ Route::middleware('auth:sanctum')->controller(OrderController::class)->group(fun
     Route::put('/orders/statusUpdate','statusUpdate');
 
 });
+
+Route::middleware('auth:sanctum')->controller(RecipeController:: class)->group(function (){
+    Route::get('/recipes','index');
+    Route::get('/recipes/{id}','show');
+    Route::post('/recipes','store');
+    Route::put('/recipes','update');
+    Route::delete('/recipes/{id}','destroy');
+});
