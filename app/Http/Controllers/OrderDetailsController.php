@@ -116,9 +116,26 @@ class OrderDetailsController extends Controller
      * @param  \App\Models\Order_details  $order_details
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Order_details $order_details)
+    public function update(Request $request)
     {
-        //
+        $response = ObjectResponse::DefaultResponse();
+        try {
+            $order = Order_details::where('order_id', $request->order_id)
+            ->update([
+                "od_unit_price" => $request->order_employee_id ,
+                "od_quantity" => $request->order_table_id,
+                "od_complement" => $request->order_bo_id,
+                "od_names" => $request->order_os_id
+            ]);
+
+            $response = ObjectResponse::CorrectResponse();
+            data_set($response,'message','peticion satisfactoria | detalle de orden actualizada.');
+            data_set($response,'alert_text','Orden actualizada');
+
+        } catch (\Exception $ex) {
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
+        }
+        return response()->json($response,$response["status_code"]);
     }
 
     /**

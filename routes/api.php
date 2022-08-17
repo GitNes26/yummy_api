@@ -8,6 +8,8 @@ use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderDetailsController;
+use App\Models\Order_details;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -93,4 +95,12 @@ Route::middleware('auth:sanctum')->controller(RecipeController:: class)->group(f
     Route::post('/recipes','store');
     Route::put('/recipes','update');
     Route::delete('/recipes/{id}','destroy');
+});
+
+Route::middleware('auth:sanctum')->controller(OrderDetailsController:: class)->group(function (){
+    Route::get('/orderD','index');
+    Route::get('/orderD/{id}','show');
+    Route::get('/orderD','store');
+    Route::get('/orderD','update');
+    Route::get('/orderD{id}','destroy');
 });

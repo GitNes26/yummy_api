@@ -89,25 +89,25 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        // if(!empty($request->od_name) && is_array($request->od_name)){
-        //     $nombres = array();
-        //     foreach ($request->od_name as $nombre){
-        //         $nombres[] = $nombre;
-        //     }
-        // }else{
+        if(!empty($request->od_name) && is_array($request->od_name)){
+            $nombres = array();
+            foreach ($request->od_name as $nombre){
+                $nombres[] = $nombre;
+            }
+        }else{
 
-        // }
-        // $concatenado = "";
-        // $i = 1;
-        // while ($row = $nombres){
-        //     if($request->od_quantity != $i){
-        //         $concatenado = $concatenado + $row + ",";
-        //         $i++;
-        //     }else{
-        //         $concatenado = $concatenado + $row;
-        //     }
+        }
+        $concatenado = "";
+        $i = 1;
+        while ($row = $nombres){
+            if($request->od_quantity != $i){
+                $concatenado = $concatenado + $row + ",";
+                $i++;
+            }else{
+                $concatenado = $concatenado + $row;
+            }
             
-        // }
+        }
         
         $response = ObjectResponse::DefaultResponse();
         
@@ -136,7 +136,7 @@ class OrderController extends Controller
                 'od_unit_price' => $request->od_unit_price,
                 'od_quantity' => $request->od_quantity,
                 'od_complement' => $request->od_complements,
-                'od_names' => $request->od_name
+                'od_names' => $concatenado
             ]);
             $new_od->save();
             //data_set($request,'order_id',$order_id);
