@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('cat_description');
             $table->string('cat_active');
             $table->timestamps();
+            $table->dateTime('deleted_at')->nullable();
         });
     }
 

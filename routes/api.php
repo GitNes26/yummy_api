@@ -102,5 +102,5 @@ Route::middleware('auth:sanctum')->controller(OrderDetailsController:: class)->g
     Route::get('/orderD/{id}','show');
     Route::post('/orderD','store');
     Route::put('/orderD','update');
-    Route::delete('/orderD{id}','destroy');
+    Route::delete('/orderD/{id}','destroy');
 });

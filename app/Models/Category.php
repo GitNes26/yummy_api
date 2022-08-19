@@ -13,6 +13,7 @@ class Category extends Model
         'cat_name',
         'cat_description',
         'cat_active',
+        'deleted_at'
     ];
     /**
      * Nombre de la tabla asociada al modelo.

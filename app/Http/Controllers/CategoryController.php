@@ -19,7 +19,7 @@ class CategoryController extends Controller
         $response = ObjectResponse::DefaultResponse();
         try {
             $list = Category::where('cat_active', true)
-            ->select('categories.cat_name', 'categories.cat_description')
+            ->select('categories.cat_id','categories.cat_name', 'categories.cat_description')
             ->orderBy('categories.cat_name', 'ASC')
             ->get();
             $response = ObjectResponse::CorrectResponse();
@@ -52,10 +52,10 @@ class CategoryController extends Controller
     {
         $response = ObjectResponse::DefaultResponse();
         try {
-            $new_recipe = Category::create([
+            $new_category = Category::create([
                 'cat_name' => $request->cat_name,
                 'cat_description' => $request->cat_description,
-                'cat_active'=> $request->cat_active
+                'cat_active'=> true
             ]);
 
             $response = ObjectResponse::CorrectResponse();
@@ -79,7 +79,7 @@ class CategoryController extends Controller
         $response = ObjectResponse::DefaultResponse();
         try{
             $category = Category::where('cat_id', $id)
-            ->select('categories.cat_name', 'categories.cat_description')
+            ->select('categories.cat_id','categories.cat_name', 'categories.cat_description')
              ->get();
              
             $response = ObjectResponse::CorrectResponse();
@@ -110,15 +110,14 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, int $id)
+    public function update(Request $request)
     {
         $response = ObjectResponse::DefaultResponse();
         try{
-            $recipe = Category::where('cat_id', $id)
+            $category = Category::where('cat_id', $request->cat_id)
             ->update([
                 'cat_name' => $request->cat_name,
-                'cat_description' => $request->cat_description,
-                'cat_active' => $request->cat_active
+                'cat_description' => $request->cat_description
             ]);
 
             $response = ObjectResponse::CorrectResponse();
