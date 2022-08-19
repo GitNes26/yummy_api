@@ -153,7 +153,7 @@ class ProductController extends Controller
             data_set($response, 'alert_text', 'Producto eliminado.');        
         }
         catch(\Exception $ex){
-            $response = ObjectResponse::CatchResponse();
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
         return response()->json($response,$response["status_code"]);
     }

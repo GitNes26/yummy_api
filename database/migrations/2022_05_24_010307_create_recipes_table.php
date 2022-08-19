@@ -15,10 +15,9 @@ return new class extends Migration
     {
         Schema::create('recipes', function (Blueprint $table) {
             $table->bigIncrements('rec_id');
-            $table->string("rec_name");
-            $table->decimal('rec_quantity_usage', 11, 2)->nullable()->default(0);
-            $table->enum("rec_measure",["kilogramo", "gramos", "litros", "mililitros", "miligramos"]);
-            $table->foreignId("rec_row_material_id")->constrained("row_materials", "rm_id");
+            $table->string("rec_milk");
+            $table->decimal('rec_quantity_usage', 11, 2)->nullable()->default(0);//tamaño CH, MD, GD
+            $table->enum("rec_measure",["kilogramo", "gramos", "litros", "mililitros", "miligramos"]); //postres, ensaladas, Cafes
             $table->foreignId("rec_pro_id")->constrained("products", "pro_id");
             $table->boolean('rec_active')->default(true);
             $table->timestamps();

@@ -18,10 +18,9 @@ class RecipeController extends Controller
         $response = ObjectResponse::DefaultResponse();
         try {
             $list = Recipe::where('rec_active', true)
-            ->select('recipes.rec_name', 
-            'recipes.rec_pro_id', 'recipes.rec_quantity_usage',
-            'recipes.rec_row_material_id','recipes.rec_measure')
-            ->orderBy('recipes.rec_name', 'ASC')
+            ->select('recipes.rec_milk', 'recipes.rec_pro_id', 'recipes.rec_quantity_usage',
+            'recipes.rec_measure')
+            ->orderBy('recipes.rec_id', 'ASC')
             ->get();
             $response = ObjectResponse::CorrectResponse();
             data_set($response,'message', 'peticion satisfactoria | lista de recetas:');
@@ -54,20 +53,25 @@ class RecipeController extends Controller
         $response = ObjectResponse::DefaultResponse();
         try {
             $new_recipe = Recipe::create([
-                'rec_name' => $request->rec_name,
                 'rec_product_id' => $request->product_id,
+                'rec_milk' => $request->rec_milk_id,
                 'rec_quantity_usage' => $request->rec_quantity_usage,
-                'rec_measure' => $request->rec_measure,
-                'rec_row_material_id' => $request->rec_row_material_id,
-                'rec_active' => $request->rec_active,
+                'rec_measure' => $request->rec_measure
             ]);
+            $new_recipe->save();
+            $recipe_id = $new_recipe->rec_id;
+            
+            //return redirect()->action([OrderDetailsController::class, 'store'], ['recipe_id' => $recipe_id, $request->except('rec_milk','rec_product_id','rec_quantity_usage','rec_measure')]);
 
             $response = ObjectResponse::CorrectResponse();
+            
             data_set($response, 'message', 'peticion satisfactoria | receta registrada');
             data_set($response, 'alert_text', 'receta registrada');
         }
         catch(\Exception $ex){
-            $response = ObjectResponse::CatchResponse($ex->getMessage());
+            
+            //$response = ObjectResponse::CatchResponse($ex->getMessage());
+            return data_set($response, 'alert_text', $request);
         }
         return response()->json($response, $response["status_code"]);
     }
@@ -83,8 +87,8 @@ class RecipeController extends Controller
         $response = ObjectResponse::DefaultResponse();
         try{
             $recipe = Recipe::where('rec_id', $id)
-            ->select('recipes.rec_name', 'recipes.rec_pro_id',
-             'recipes.rec_quantity_usage','recipes.rec_row_material_id','recipes.rec_measure')
+            ->select('recipes.rec_milk', 'recipes.rec_pro_id',
+             'recipes.rec_quantity_usage','recipes.rec_measure')
              ->get();
              
             $response = ObjectResponse::CorrectResponse();
@@ -122,11 +126,10 @@ class RecipeController extends Controller
         try{
             $recipe = Recipe::where('rec_id', $id)
             ->update([
-                'rec_name' => $request->rec_name,
+                'rec_milk' => $request->rec_milk,
                 'rec_pro_id' => $request->rec_pro_id,
                 'rec_quantity_usage' => $request->rec_quantity_usage,
                 'rec_measure' => $request->rec_measure,
-                'rec_row_material_id' => $request->rec_row_material_id,
                 'rec_active' => $request->rec_active,
             ]);
             $response = ObjectResponse::CorrectResponse();
@@ -156,7 +159,7 @@ class RecipeController extends Controller
             ]);
         }
         catch(\Exception $ex){
-            $response = ObjectResponse::CatchResponse();
+            $response = ObjectResponse::CatchResponse($ex->getMessage());
         }
         return response()->json($response,$response["status_code"]);
     }
