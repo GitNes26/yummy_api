@@ -59,8 +59,10 @@ Route::middleware('auth:sanctum')->controller(ProductController::class)->group(f
     Route::get('/products','index');
     Route::get('/products/{id}','show');
     Route::post('products','store');
-    Route::put('products','update');
-    Route::delete('products/{id}','destroy');
+    Route::post('products/image','storeimage');
+    Route::get('/products/category/{cat}','prodxcat');
+    Route::post('products/update','update');
+    Route::post('products/delete','destroy');
 });
 Route::middleware('auth:sanctum')->controller(RecipeController::class)->group(function () {
     Route::get('/recipes','index');

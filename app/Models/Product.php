@@ -14,6 +14,8 @@ class Product extends Model
         'pro_cat_id',
         'pro_price',
         'pro_active',
+        'description',
+        'pathPhoto',
     ];
     /**
      * Nombre de la tabla asociada al modelo.
